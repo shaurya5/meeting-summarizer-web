@@ -2,13 +2,14 @@ import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCNUHa8ivAsjyl11eTRuAVUbhc2gJx29aU",
-  authDomain: "meeting-summarizer-2f9e3.firebaseapp.com",
-  projectId: "meeting-summarizer-2f9e3",
-  storageBucket: "meeting-summarizer-2f9e3.appspot.com",
-  messagingSenderId: "795130178287",
-  appId: "1:795130178287:web:827c4ce56917b9263c491a",
+  apiKey: "AIzaSyBbWx0lmDT-4celiSP4nyBnjii4MJgMiXA",
+  authDomain: "meeting-summarizer-dcb32.firebaseapp.com",
+  projectId: "meeting-summarizer-dcb32",
+  storageBucket: "meeting-summarizer-dcb32.appspot.com",
+  messagingSenderId: "200606141592",
+  appId: "1:200606141592:web:7ea4b01ae32739674a14ed"
 };
+
 
 // Initialize Firebase
 

@@ -1,83 +1,99 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-async function Transcription() {
+function Transcription() {
+  const [text, setText] = useState("");
+  const API_KEY = "7a03ffe1e1aa4ef59d681091e3f4c042";
+  const [id1, setId1] = useState("");
 
-  const [text, setText] = useState("")
-  const API_KEY = "3079c839c24d413d80f911b2190b6de4";
-  let url = "https://api.assemblyai.com/v2/transcript";
-  let audioUrl = localStorage.getItem("audio_url");
-  let data = {
-    audio_url: audioUrl,
-  };
+  useEffect(() => {
+    async function upload() {
+      try {
+        const url = "https://api.assemblyai.com/v2/transcript";
+        const audioUrl = localStorage.getItem("audio_url");
+        const data = {
+          audio_url: audioUrl,
+        };
 
-  let params = {
-    headers: {
-      authorization: API_KEY,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(data),
-    method: "POST",
-  };
-  let id;
-  try{
-    const fetchData = await fetch(url, params)
-    const res = await fetchData.json()
-    const idFetch = await res['id']
-    id = idFetch
-  }catch(error){
-    console.log(error)
-  }
-    // .then((response) => response.json())
-    // .then((data) => {
-    //   console.log("Success:", data);
-    //   console.log("ID:", data["id"]);
-    //   id = data["id"];
-    // })
-    // .catch((error) => {
-    //   console.error("Error:", error);
-    // });
-
-  url = `https://api.assemblyai.com/v2/transcript/${id}`;
-
-  params = {
-    headers: {
-      authorization: API_KEY,
-      "content-type": "application/json",
-    },
-    method: "GET",
-  };
-
-  function print(data) {
-    switch (data.status) {
-      case "queued":
-      case "processing":
-        console.log(
-          "AssemblyAI is still transcribing your audio, please try again in a few minutes!"
-        );
-        break;
-      case "completed":
-        console.log(`Success: ${data}`);
-        console.log(`Text: ${data.text}`);
-        break;
-      default:
-        console.log(`Something went wrong :-( : ${data.status}`);
-        break;
+        const params = {
+          headers: {
+            authorization: API_KEY,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(data),
+          method: "POST",
+        };
+        const fetchData = await fetch(url, params);
+        const res = await fetchData.json();
+        const idFetch = await res["id"];
+        return idFetch;
+      } catch (error) {
+        console.log(error);
+      }
     }
-  }
+    const returnedId = upload()
+      .then((id) => {
+        setId1(id);
+        localStorage.setItem("id", id);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
-  fetch(url, params)
-    .then((response) => response.json())
-    .then((data) => {
-      print(data);
-      setText(data.text)
-    })
-    .catch((error) => {
-      console.error(`Error: ${error}`);
-    });
+  useEffect(() => {
+    async function download() {
+      const id = localStorage.getItem("id");
+      const url = `https://api.assemblyai.com/v2/transcript/${id}`;
 
-  return <div>
-    {text && <p>{text}</p>}
-  </div>;
+      const params = {
+        headers: {
+          authorization: API_KEY,
+          "content-type": "application/json",
+        },
+        method: "GET",
+      };
+
+      // function print(data) {
+      //   switch (data.status) {
+      //     case "queued":
+      //     case "processing":
+      //       console.log(
+      //         "AssemblyAI is still transcribing your audio, please try again in a few minutes!"
+      //       );
+      //       break;
+      //     case "completed":
+      //       console.log(`Success: ${data}`);
+      //       console.log(`Text: ${data.text}`);
+      //       break;
+      //     default:
+      //       console.log(`Something went wrong :-( : ${data.status}`);
+      //       break;
+      //   }
+      // }
+      try {
+        const data = await fetch(url, params);
+        const res = await data.json();
+        return res;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    const result = download()
+      .then((res) => {
+        setText(res.text);
+        console.log(res.text);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [id1]);
+
+  return (
+    <div>
+      {text && <p>{localStorage.getItem("text")}</p>}
+      {/* {isLoading && <p>Loading...</p>} */}
+    </div>
+  );
 }
 
 export default Transcription;

@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Input from "./Input";
-import Transcription from "./Transcription";
+import UpdatedTranscription from "./UpdatedTranscription";
 
 function App() {
   return (
@@ -8,7 +8,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Input />} />
-          <Route path="/convert" element={<Transcription />} />
+          <Route path="/convert" element={<UpdatedTranscription />} />
         </Routes>
       </BrowserRouter>
     </div>
