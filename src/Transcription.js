@@ -53,23 +53,6 @@ function Transcription() {
         method: "GET",
       };
 
-      // function print(data) {
-      //   switch (data.status) {
-      //     case "queued":
-      //     case "processing":
-      //       console.log(
-      //         "AssemblyAI is still transcribing your audio, please try again in a few minutes!"
-      //       );
-      //       break;
-      //     case "completed":
-      //       console.log(`Success: ${data}`);
-      //       console.log(`Text: ${data.text}`);
-      //       break;
-      //     default:
-      //       console.log(`Something went wrong :-( : ${data.status}`);
-      //       break;
-      //   }
-      // }
       try {
         const data = await fetch(url, params);
         const res = await data.json();
@@ -81,7 +64,6 @@ function Transcription() {
     const result = download()
       .then((res) => {
         setText(res.text);
-        console.log(res.text);
       })
       .catch((err) => {
         console.log(err);

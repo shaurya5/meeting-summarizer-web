@@ -2,18 +2,23 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 function UpdatedTranscription() {
-  const [id, setId] = useState("");
-  const [isLoading, setIsLoading] = useState("");
+  const [msg, setMsg] = useState("");
+  const [isLoading, setIsLoading] = useState();
   const [transcript, setTranscript] = useState("");
   const API_KEY = "7a03ffe1e1aa4ef59d681091e3f4c042";
 
   function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   useEffect(() => {
     const fetchTranscript = async () => {
-      const audioUrl = localStorage.getItem("audio_url");
+      let audioUrl = localStorage.getItem("audio_url");
+      while (audioUrl === null || audioUrl === undefined) {
+        setMsg("Fetching uploaded audio's URL...")
+        await sleep(3000);
+        audioUrl = localStorage.getItem("audio_url");
+      }
       const data = {
         audio_url: audioUrl,
       };
@@ -29,7 +34,7 @@ function UpdatedTranscription() {
       });
 
       const idFetch = await fetchData.data.id;
-      setId(idFetch);
+      // setId(idFetch);
 
       let fetchData2 = await axios.get(
         `https://api.assemblyai.com/v2/transcript/${idFetch}`,
@@ -40,12 +45,15 @@ function UpdatedTranscription() {
           },
         }
       );
-      console.log(JSON.stringify(fetchData2.data));
-      
-      while (fetchData2.data.status === "processing" || fetchData2.data.status === "queued") {
-        console.log("loading");
+
+      while (
+        fetchData2.data.status === "processing" ||
+        fetchData2.data.status === "queued"
+      ) {
+        setMsg("Waiting for API...")
         fetchData2 = await axios.get(
-          `https://api.assemblyai.com/v2/transcript/${idFetch}`, {
+          `https://api.assemblyai.com/v2/transcript/${idFetch}`,
+          {
             headers: {
               authorization: API_KEY,
               "content-type": "application/json",
@@ -55,8 +63,9 @@ function UpdatedTranscription() {
         await sleep(5000);
       }
       if (fetchData2.data.status === "completed") {
-        // console.log(fetchData2.data.text);
+        setMsg("Transcription successful")
         setTranscript(fetchData2.data.text);
+        localStorage.removeItem('audio_url')
       } else {
         console.log("an error occured");
       }
@@ -66,7 +75,7 @@ function UpdatedTranscription() {
 
   return (
     <div>
-      {isLoading && <div>{isLoading}</div>}
+      {msg && <div>{msg}</div>}
       {transcript && <div>{transcript}</div>}
     </div>
   );

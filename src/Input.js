@@ -44,13 +44,15 @@ function Input() {
       className="App"
       style={{
         display: "flex",
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        minHeight: "50vh",
+        minHeight: "70vh",
       }}
     >
+      <h1>Upload audio file</h1>
       <input
-        style={{ display: "flex", fontSize: "30px" }}
+        style={{ display: "flex", fontSize: "30px", marginLeft: "120px", marginTop: "30px" }}
         type="file"
         onChange={(e) => {
           setAudioUpload(e.target.files[0]);
@@ -58,9 +60,12 @@ function Input() {
       />
       <button
         onClick={handleClick}
-        style={{ display: "flex", fontSize: "30px" }}
-      >
-        Upload
+        style={{
+          display: "flex",
+          fontSize: "30px",
+          marginTop: "50px",
+        }}
+      > Upload Audio
       </button>
       {isLoading && <div>Uploading...</div>}
       {finalAudio && <div>{finalAudio}</div>}
