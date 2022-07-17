@@ -1,4 +1,9 @@
-- Upload audio to cloudinary (done)
-- Send audio to assemblyai api (done)
-- Receive transcription response and make a downloadable txt file (done, txt lite)
-- Implement mp4->mp3 in website, store video in cloud, perform operations, delete video from cloud to save space (optional)
+# Meeting Summarizer App 
+[Website](https://meeting-summarizer.netlify.app)
+## Web App built using ReactJS for summarizing meetings
+### PS-1 Project for Jio Platforms
+
+## Project Description
+- User can upload the audio file of meeting on homepage to get the transcription on `/convert` route
+- Audio file is stored in Firebase cloud
+- Used AssemblyAI for transcription
