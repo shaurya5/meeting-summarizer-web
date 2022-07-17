@@ -1,79 +1,81 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function Transcription() {
-  const [text, setText] = useState("");
+  const [msg, setMsg] = useState("");
+  const [transcript, setTranscript] = useState("");
   const API_KEY = "7a03ffe1e1aa4ef59d681091e3f4c042";
-  const [id1, setId1] = useState("");
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   useEffect(() => {
-    async function upload() {
-      try {
-        const url = "https://api.assemblyai.com/v2/transcript";
-        const audioUrl = localStorage.getItem("audio_url");
-        const data = {
-          audio_url: audioUrl,
-        };
-
-        const params = {
-          headers: {
-            authorization: API_KEY,
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(data),
-          method: "POST",
-        };
-        const fetchData = await fetch(url, params);
-        const res = await fetchData.json();
-        const idFetch = await res["id"];
-        return idFetch;
-      } catch (error) {
-        console.log(error);
+    const fetchTranscript = async () => {
+      let audioUrl = localStorage.getItem("audio_url");
+      while (audioUrl === null || audioUrl === undefined) {
+        setMsg("Fetching uploaded audio's URL...")
+        await sleep(3000);
+        audioUrl = localStorage.getItem("audio_url");
       }
-    }
-    const returnedId = upload()
-      .then((id) => {
-        setId1(id);
-        localStorage.setItem("id", id);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+      const data = {
+        audio_url: audioUrl,
+      };
 
-  useEffect(() => {
-    async function download() {
-      const id = localStorage.getItem("id");
-      const url = `https://api.assemblyai.com/v2/transcript/${id}`;
-
-      const params = {
+      const fetchData = await axios({
+        method: "post",
+        url: "https://api.assemblyai.com/v2/transcript",
+        data,
         headers: {
           authorization: API_KEY,
           "content-type": "application/json",
         },
-        method: "GET",
-      };
-
-      try {
-        const data = await fetch(url, params);
-        const res = await data.json();
-        return res;
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    const result = download()
-      .then((res) => {
-        setText(res.text);
-      })
-      .catch((err) => {
-        console.log(err);
       });
-  }, [id1]);
+
+      const idFetch = await fetchData.data.id;
+      // setId(idFetch);
+
+      let fetchData2 = await axios.get(
+        `https://api.assemblyai.com/v2/transcript/${idFetch}`,
+        {
+          headers: {
+            authorization: API_KEY,
+            "content-type": "application/json",
+          },
+        }
+      );
+
+      while (
+        fetchData2.data.status === "processing" ||
+        fetchData2.data.status === "queued"
+      ) {
+        setMsg("Waiting for API...")
+        fetchData2 = await axios.get(
+          `https://api.assemblyai.com/v2/transcript/${idFetch}`,
+          {
+            headers: {
+              authorization: API_KEY,
+              "content-type": "application/json",
+            },
+          }
+        );
+        await sleep(5000);
+      }
+      if (fetchData2.data.status === "completed") {
+        setMsg("Transcription successful")
+        setTranscript(fetchData2.data.text);
+        localStorage.removeItem('audio_url')
+      } else {
+        console.log("an error occured");
+      }
+    };
+    fetchTranscript();
+  }, []);
 
   return (
     <div>
-      {text && <p>{localStorage.getItem("text")}</p>}
-      {/* {isLoading && <p>Loading...</p>} */}
+      {msg && <div>{msg}</div>}
+      {transcript && <div>{transcript}</div>}
     </div>
   );
 }

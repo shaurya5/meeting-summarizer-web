@@ -1,4 +1,4 @@
-- Upload audio to cloudinary
-- Send audio to assemblyai api
-- Receive transcription response and make a downloadable txt file
+- Upload audio to cloudinary (done)
+- Send audio to assemblyai api (done)
+- Receive transcription response and make a downloadable txt file (done, txt lite)
 - Implement mp4->mp3 in website, store video in cloud, perform operations, delete video from cloud to save space (optional)

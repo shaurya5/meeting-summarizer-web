@@ -15,11 +15,13 @@ function Input() {
   async function handleClick() {
     if (audioUpload === null) return;
     setIsLoading(true);
+
     const audioName = audioUpload.name + v4();
     localStorage.setItem("audio_name", audioName);
     const audioRef = ref(storage, `audios/${audioName}`);
     await uploadBytes(audioRef, audioUpload);
     await getAudioData();
+    
     setIsLoading(false);
     alert("Audio uploaded successfully");
     navigate("/convert");
