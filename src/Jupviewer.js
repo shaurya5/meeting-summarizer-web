@@ -111,7 +111,7 @@ class JupViewer extends React.Component {
   }
 
   praseOutputs(outputs) {
-    if (outputs.length == 0) {
+    if (outputs.length === 0) {
       return "";
     }
     // Handle "data" type cells
@@ -133,7 +133,7 @@ class JupViewer extends React.Component {
     for (var outs in outputs) {
       if ("data" in outputs[outs]) {
         if ("text/plain" in outputs[outs]["data"]) {
-          for (var text in outputs[outs]["data"]["text/plain"]) {
+          for (let text in outputs[outs]["data"]["text/plain"]) {
             text_plain += outputs[outs]["data"]["text/plain"][text];
           }
           text_found = true;
@@ -145,7 +145,7 @@ class JupViewer extends React.Component {
         }
       }
       if ("name" in outputs[outs]) {
-        for (var text in outputs[outs]["text"]) {
+        for (let text in outputs[outs]["text"]) {
           stdout += outputs[outs]["text"][text];
         }
         stdout_found = true;
@@ -234,6 +234,7 @@ class JupViewer extends React.Component {
           <Tag color="#87d068">data:image/png</Tag>
           <br></br>
           <img
+            alt="abcd"
             src={img_data}
             style={{
               display: img_found ? "" : "none",
@@ -372,7 +373,7 @@ class JupViewer extends React.Component {
                   <Col span={1}></Col>
                   <Col span={22}>
                     <img
-                      alt="No Cover Image Found"
+                      alt="cover"
                       style={{
                         display: !!this.props.coverImg ? "" : "none",
                         width: "100%",
@@ -452,8 +453,7 @@ class JupViewer extends React.Component {
                             color: this.state.background_text_theme,
                             float: "left",
                             padding: "5px",
-                            color: "#56ACBC",
-                            display: item["cell_type"] == "code" ? "" : "none",
+                            display: item["cell_type"] === "code" ? "" : "none",
                           }}
                         >
                           I [ {item["execution_count"]} ]:
@@ -467,7 +467,7 @@ class JupViewer extends React.Component {
                         textAlign: "left",
                       }}
                     >
-                      {item["cell_type"] == "code" ? (
+                      {item["cell_type"] === "code" ? (
                         <div
                           style={{
                             padding: "5px 0px",
@@ -489,7 +489,7 @@ class JupViewer extends React.Component {
                             }}
                             width="100%"
                             maxLines={
-                              item["source"].length == 0
+                              item["source"].length === 0
                                 ? 1
                                 : item["source"].length + 1
                             }
@@ -533,13 +533,13 @@ class JupViewer extends React.Component {
                     <Col span={1}></Col>
                   </Row>
 
-                  {item["cell_type"] == "markdown" ? (
+                  {item["cell_type"] === "markdown" ? (
                     <div></div>
                   ) : (
                     <Row
                       style={{
                         display:
-                          !!item["outputs"].length == 0 ? "none" : "visible",
+                          !!item["outputs"].length === 0 ? "none" : "visible",
                         backgroundColor: this.state.background_output_theme,
                       }}
                     >
@@ -550,7 +550,6 @@ class JupViewer extends React.Component {
                             color: this.state.background_text_theme,
                             float: "left",
                             padding: "5px",
-                            color: "#E5496A",
                           }}
                         >
                           O [ {item["execution_count"]} ]:
